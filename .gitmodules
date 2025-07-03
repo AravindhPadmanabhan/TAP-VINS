@@ -1,0 +1,12 @@
+[submodule "catkin_ws/src/VINS-Mono"]
+	path = catkin_ws/src/VINS-Mono
+	url = https://github.com/AravindhPadmanabhan/VINS-Mono.git
+[submodule "catkin_ws/tap/co-tracker"]
+	path = catkin_ws/tap/co-tracker
+	url = https://github.com/AravindhPadmanabhan/co-tracker.git
+[submodule "catkin_ws/tap/tapnet"]
+	path = catkin_ws/tap/tapnet
+	url = https://github.com/AravindhPadmanabhan/tapnet.git
+[submodule "catkin_ws/tap/track_on"]
+	path = catkin_ws/tap/track_on
+	url = https://github.com/AravindhPadmanabhan/track_on.git
