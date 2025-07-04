@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOWNLOAD_DIR={$1:-"/home/data/oxford"}
+DOWNLOAD_DIR=${1:-"/home/data/oxford"}
 
 pip install gdown
 
