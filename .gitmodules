@@ -10,3 +10,6 @@
 [submodule "catkin_ws/tap/track_on"]
 	path = catkin_ws/tap/track_on
 	url = https://github.com/AravindhPadmanabhan/track_on.git
+[submodule "img_ws/src/raw_image_pipeline"]
+	path = img_ws/src/raw_image_pipeline
+	url = https://github.com/AravindhPadmanabhan/raw_image_pipeline.git
