@@ -82,5 +82,9 @@ RUN cd TAP-VINS/catkin_ws/tap/tapnet && \
     cd checkpoints && \
     wget https://storage.googleapis.com/dm-tapnet/tapnext/bootstapnext_ckpt.npz
 
+WORKDIR /home
+
+RUN pip install evo
+
 # Set default shell to bash
 CMD ["/bin/bash"]
