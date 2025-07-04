@@ -102,22 +102,21 @@ After starting the Docker container, the VINS-Mono submodule is checked out to t
 
 ## 📊 Evaluation on the EuRoC MAV Dataset
 
-After checking out the branch corresponding to the TAP model you want to evaluate and rebuilding the workspace, run the evaluation script as follows:
-
-```bash
-cd catkin_ws/src/VINS-Mono
-chmod +x euroc_eval.sh
-./euroc_eval.sh <path-to-euroc-rosbags> <branch-name> <rosbag-speed> <eval-metric>
-```
-
-- `<path-to-euroc-rosbags>`: Path to the directory containing your EuRoC bag files.
-- `<branch-name>`: A custom label you choose, which will:
-  - Be appended to the names of the newly recorded bags containing estimated trajectories and ground truth.
-  - Define the name of the output directory (inside your EuRoC bags folder) where the recorded bags will be saved.
-- `<rosbag-speed>`: Playback speed for the rosbag (e.g. `0.3` for slower playback).
-- `<eval-metric>`: The evaluation metric to compute. Valid options are:
-  - `"RPE"` for Relative Pose Error (computed over 1-meter trajectory segments).
-  - `"APE"` for Absolute Pose Error.
+- After checking out the branch corresponding to the TAP model you want to evaluate and rebuilding the workspace, run the evaluation script as follows:
+  ```bash
+  cd catkin_ws/src/VINS-Mono
+  chmod +x euroc_eval.sh
+  ./euroc_eval.sh <path-to-euroc-rosbags> <branch-name> <rosbag-speed> <eval-metric>
+  ```
+  
+  - `<path-to-euroc-rosbags>`: Path to the directory containing your EuRoC bag files.
+  - `<branch-name>`: A custom label you choose, which will:
+    - Be appended to the names of the newly recorded bags containing estimated trajectories and ground truth.
+    - Define the name of the output directory (inside your EuRoC bags folder) where the recorded bags will be saved.
+  - `<rosbag-speed>`: Playback speed for the rosbag (e.g. `0.3` for slower playback).
+  - `<eval-metric>`: The evaluation metric to compute. Valid options are:
+    - `"RPE"` for Relative Pose Error (computed over 1-meter trajectory segments).
+    - `"APE"` for Absolute Pose Error.
 
 ---
 
@@ -145,7 +144,70 @@ For evaluations using the backend (i.e. global pose-graph optimization):
    ```
 3. In the launch file:
    ```
-   VINS-Mono/vins_estimator/launch/euroc.launch
+   VINS-Mono/vins_estimator/launch/euroc_eval.launch
+   ```
+   - Uncomment the block that launches the pose-graph optimization node.
+
+## 📊 Evaluation on the Oxford-Spires Dataset
+
+- Download the [Oxford-Spires](https://dynamic.robots.ox.ac.uk/datasets/oxford-spires/) dataset using the following script:
+  ```bash
+  cd spires
+  chmod +x download_spires.sh
+  ./download_spires.sh <path-to-download>
+  ```
+- Oxford-Spires rosbags consist of debayered images which need to be white-balanced. To do so, we use a fork of [raw_image_pipeline](https://github.com/leggedrobotics/raw_image_pipeline). It is added as a submodule in this repository. Please build it in `img_ws` using the instructions [here](https://github.com/AravindhPadmanabhan/raw_image_pipeline).
+
+- On a separete terminal window, run this:
+  ```bash
+  cd img_ws/
+  source devel/setup.bash
+  roslaunch raw_image_pipeline_ros raw_image_pipeline_node.launch
+  ```
+
+- After checking out the branch corresponding to the TAP model you want to evaluate and rebuilding the workspace, run the evaluation script as follows:
+  ```bash
+  cd catkin_ws/src/VINS-Mono
+  chmod +x oxford_eval.sh
+  ./oxford_eval.sh <path-to-spires-rosbags> <branch-name> <rosbag-speed> <eval-metric>
+  ```
+  
+  - `<path-to-spires-rosbags>`: Path to the directory containing your Oxford-Spires bag files.
+  - `<branch-name>`: A custom label you choose, which will:
+    - Be appended to the names of the newly recorded bags containing estimated trajectories and ground truth.
+    - Define the name of the output directory (inside your Oxford-Spires bags folder) where the recorded bags will be saved.
+  - `<rosbag-speed>`: Playback speed for the rosbag (e.g. `0.3` for slower playback).
+  - `<eval-metric>`: The evaluation metric to compute. Valid options are:
+    - `"RPE"` for Relative Pose Error (computed over 1-meter trajectory segments).
+    - `"APE"` for Absolute Pose Error.
+
+---
+
+### Example Usage
+
+To evaluate the CoTracker branch on Oxford-Spires bags at half playback speed with RPE analysis:
+```bash
+./oxford_eval.sh /home/username/data/oxford cotracker_eval 0.5 RPE
+```
+This will generate new bags like `observatory2_cotracker_eval.bag` in a directory `/home/username/data/oxford/cotracker_eval/` and display RPE results for all sequences once evaluation is complete.
+
+---
+
+### Enabling Pose-Graph Optimization
+
+For evaluations using the backend (i.e. global pose-graph optimization):
+
+1. Open the config file:
+   ```
+   VINS-Mono/config/oxford/oxford_config.yaml
+   ```
+2. Set:
+   ```yaml
+   loop_closure: 1
+   ```
+3. In the launch file:
+   ```
+   VINS-Mono/vins_estimator/launch/oxford_eval.launch
    ```
    - Uncomment the block that launches the pose-graph optimization node.
 
@@ -155,7 +217,7 @@ For evaluations using the backend (i.e. global pose-graph optimization):
 - NVIDIA GPU with drivers compatible with CUDA (if using GPU acceleration)
 - Docker
 - ROS Noetic (inside the container)
-- Sufficient disk space for EuRoC dataset and deep learning models
+- Sufficient disk space for the datasets and deep learning models
 
 ---
 
