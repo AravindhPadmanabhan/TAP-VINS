@@ -38,6 +38,12 @@ We provide a Docker environment to simplify dependencies and ensure reproducibil
   ./run_docker.sh
   ```
 
+- To open additional terminals in the container with GUI support:  
+  ```bash
+  docker exec -it -e DISPLAY=<your_DISPLAY> -e XAUTHORITY=path/to/TAP-VINS/docker/.docker.xauth tap_vins bash
+  ```
+  - Note: On remote servers with X forwarding, the DISPLAY value may differ between terminals. Always set DISPLAY to match the output of `echo $DISPLAY` in the terminal where the container was launched.
+
 This script:
 - Starts the container interactively
 - Mounts the TAP-VINS codebase into the container

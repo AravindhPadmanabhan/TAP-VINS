@@ -7,22 +7,28 @@ NAME=tap_vins
 
 XAUTH=$(pwd)/.docker.xauth
 
-echo $DISPLAY
-echo "Preparing Xauthority data..."
-# Get the correct DISPLAY (should be something like :10.0)
-DISPLAY_NUM=$(echo $DISPLAY | cut -d: -f2)
+echo "Current DISPLAY: $DISPLAY"
+echo "Preparing fresh Xauthority data..."
 
-# Extract the xauth entry for the forwarded display
-xauth_list=$(xauth nlist $DISPLAY | sed -e 's/^..../ffff/')
-# xauth_list=$(xauth nlist :1 | tail -n 1 | sed -e 's/^..../ffff/')
-if [ ! -f $XAUTH ]; then
-    if [ -n "$xauth_list" ]; then
-        echo $xauth_list | xauth -f $XAUTH nmerge -
-    else
-        touch $XAUTH
-    fi
-    chmod a+r $XAUTH
+# Delete existing .docker.xauth if it exists
+if [ -f "$XAUTH" ]; then
+    echo "Removing existing Xauthority file: $XAUTH"
+    rm -f "$XAUTH"
 fi
+
+# Get the xauth entries for the current display
+xauth_list=$(xauth nlist $DISPLAY | sed -e 's/^..../ffff/')
+
+if [ -n "$xauth_list" ]; then
+    echo "$xauth_list" | xauth -f "$XAUTH" nmerge -
+else
+    echo "No xauth data found. Creating empty file."
+    touch "$XAUTH"
+fi
+
+chmod a+r "$XAUTH"
+
+echo "Xauthority setup complete at $XAUTH"
 
 echo "Done."
 echo ""
