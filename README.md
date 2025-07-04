@@ -1,6 +1,6 @@
 # TAP-VINS
 
-TAP-VINS integrates advanced **Tracking Any Point (TAP)** algorithms into the VINS-Mono pipeline for improved visual-inertial odometry performance. It combines ROS-based visual odometry with modern deep learning trackers like CoTracker, Track-On, and TAPNext.
+TAP-VINS integrates advanced **Tracking Any Point (TAP)** algorithms into the VINS-Mono pipeline for improved visual-inertial odometry performance. It combines ROS-based visual odometry with modern deep learning trackers like CoTracker3, Track-On, and TAPNext.
 
 ---
 
@@ -70,7 +70,6 @@ Once inside the container, you’ll have a fully configured environment to build
 After starting the Docker container, the VINS-Mono submodule is checked out to the `master` branch, which uses the default KLT tracker. To run TAP-VINS with one of the integrated TAP models, switch VINS-Mono to the corresponding branch as shown below:
 
 - Navigate to the VINS-Mono directory:
-
   ```bash
   cd catkin_ws/src/VINS-Mono
   ```
@@ -78,25 +77,21 @@ After starting the Docker container, the VINS-Mono submodule is checked out to t
 - Check out the desired branch for your chosen TAP model:
 
   - **CoTracker3:**
-
     ```bash
     git checkout cotracker
     ```
 
   - **Track-On:**
-
     ```bash
     git checkout trackon
     ```
 
   - **TAPNext:**
-
     ```bash
     git checkout tapnext
     ```
 
 - Return to the workspace root and rebuild:
-
   ```bash
   cd ../..
   catkin build
@@ -104,7 +99,6 @@ After starting the Docker container, the VINS-Mono submodule is checked out to t
   ```
 
 - Launch TAP-VINS:
-
   ```bash
   roslaunch vins_estimator euroc.launch
   ```
@@ -112,27 +106,60 @@ After starting the Docker container, the VINS-Mono submodule is checked out to t
 - Play EuRoC bag files as needed.
 
 - Visualize results in RViz:
-
   ```bash
   roslaunch vins_estimator vins_rviz.launch
   ```
 
-Refer to individual package READMEs or your thesis documentation for specific usage details.
 
-## ✅ Evaluation on the EuRoC MAV dataset
-After checking out to the branch corresponding to the TAP model you want to evaluate and building:
-  ```bash
-  cd catkin_ws/src/VINS-Mono
-  chmod +x euroc_eval.sh
-  ./euroc_eval.sh <path-to-euroc-rosbags> <branch-name> <rosbag-speed>
-  ```
-branch-name is a name you want to append to the bags that have recorded ground truth and estimated trajectories. It is also the name of the directory where the recorded bags will be stored, inside the euroc bags directory.
+## 📊 Evaluation on the EuRoC MAV Dataset
 
-Once you have the bags recorded, run the following commands to evaluate each bag on [evo](https://github.com/MichaelGrupp/evo):
- ```bash
- pip install evo
- evo_rpe bag <bag-name> /benchmark_publisher/odometry /vins_estimator/odometry -a -d 1 -u m
- ```
+After checking out the branch corresponding to the TAP model you want to evaluate and rebuilding the workspace, run the evaluation script as follows:
+
+```bash
+cd catkin_ws/src/VINS-Mono
+chmod +x euroc_eval.sh
+./euroc_eval.sh <path-to-euroc-rosbags> <branch-name> <rosbag-speed> <eval-metric>
+```
+
+- `<path-to-euroc-rosbags>`: Path to the directory containing your EuRoC bag files.
+- `<branch-name>`: A custom label you choose, which will:
+  - Be appended to the names of the newly recorded bags containing estimated trajectories and ground truth.
+  - Define the name of the output directory (inside your EuRoC bags folder) where the recorded bags will be saved.
+- `<rosbag-speed>`: Playback speed for the rosbag (e.g. `0.3` for slower playback).
+- `<eval-metric>`: The evaluation metric to compute. Valid options are:
+  - `"RPE"` for Relative Pose Error (computed over 1-meter trajectory segments).
+  - `"APE"` for Absolute Pose Error.
+
+---
+
+### Example Usage
+
+To evaluate the CoTracker branch on EuRoC bags at half playback speed with RPE analysis:
+```bash
+./euroc_eval.sh /home/username/data/euroc cotracker_eval 0.5 RPE
+```
+This will generate new bags like `MH_01_cotracker_eval.bag` in a directory `/home/username/data/euroc/cotracker_eval/` and display RPE results for all sequences once evaluation is complete.
+
+---
+
+### Enabling Pose-Graph Optimization
+
+For evaluations using the backend (i.e. global pose-graph optimization):
+
+1. Open the config file:
+   ```
+   VINS-Mono/config/euroc/euroc_config.yaml
+   ```
+2. Set:
+   ```yaml
+   loop_closure: 1
+   ```
+3. In the launch file:
+   ```
+   VINS-Mono/vins_estimator/launch/euroc.launch
+   ```
+   - Uncomment the block that launches the pose-graph optimization node.
+
 
 ## 📝 Requirements
 
