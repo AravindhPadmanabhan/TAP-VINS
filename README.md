@@ -22,40 +22,29 @@ git submodule update --init --recursive
 
 We provide a Docker environment to simplify dependencies and ensure reproducibility.
 
----
-
-### 1. Go to the Docker Folder
+- 1. Go to the Docker Folder
 
 Navigate to the docker folder inside your TAP-VINS repository:
-
 ```bash
 cd docker
 ```
 
----
-
-### 2. Build the Docker Image
+- 2. Build the Docker Image
 
 Build the Docker image using the provided Dockerfile:
-
 ```bash
 docker build -t tap-vins-img .
 ```
-
 This may take a while depending on your system and internet speed.
 
----
-
-### 3. Run the Docker Container
+- 3. Run the Docker Container
 
 Run the container using the provided script:
-
 ```bash
 ./run_docker.sh
 ```
 
 This script:
-
 - Starts the container interactively
 - Mounts the TAP-VINS codebase into the container
 - Sets up display forwarding so you can use tools like RViz
