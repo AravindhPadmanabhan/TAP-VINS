@@ -35,6 +35,7 @@ We provide a Docker environment to simplify dependencies and ensure reproducibil
 
 - Run the Docker Container
   ```bash
+  chmod +x run_docker.sh
   ./run_docker.sh
   ```
 
